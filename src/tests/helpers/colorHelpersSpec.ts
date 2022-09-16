@@ -44,7 +44,7 @@ describe('Testing getRGBValue helper function', (): void => {
 })
 
 describe('Testing getRandomRGB helper function', ():void => {
-    const returnColor = getRandomRGB()
+    const returnColor = getRandomRGB(1)
     
     it('check proper formating of rgba color object', ()=> {
         expect(returnColor).toEqual(jasmine.objectContaining({
@@ -82,19 +82,19 @@ describe('Testing getAlphaValue helper function', ():void => {
 
 describe('Testing isLightColor helper function', ():void => {
     it('check white', ()=> {
-        expect(isLightColor({r: 255, g: 255,b: 255})).toBeTrue
+        expect(isLightColor({r: 255, g: 255,b: 255, alpha:1})).toBeTrue
     })
 
     it('check black', ()=> {
-        expect(isLightColor({r: 0, g: 0,b: 0})).toBeFalse
+        expect(isLightColor({r: 0, g: 0,b: 0, alpha:1})).toBeFalse
     })
 
     it('check navy blue', ()=> {
-        expect(isLightColor({r: 0, g: 0,b: 100})).toBeFalse
+        expect(isLightColor({r: 0, g: 0,b: 100, alpha:1})).toBeFalse
     })
 
     it('check yellow', ()=> {
-        expect(isLightColor({r: 255, g: 255,b: 0})).toBeTrue
+        expect(isLightColor({r: 255, g: 255,b: 0, alpha:1})).toBeTrue
     })
 
 })

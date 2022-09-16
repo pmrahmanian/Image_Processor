@@ -13,34 +13,40 @@ placeholder.get('/', async (req:Request, res:Response)=> {
     const g = req.query.g ? getRGBValue(req.query.g as string) as number: 0 as number;
     const b = req.query.b ? getRGBValue(req.query.b as string) as number: 0 as number;
     const alpha = req.query.alpha ? getAlphaValue(req.query.alpha as string) as number: 1 as number;
-    const color = (r || g || b) ? {r:r, g:g, b:b, alpha:alpha} : getRandomRGB();
+    const color = (r || g || b) ? {r:r, g:g, b:b, alpha:alpha} : getRandomRGB(alpha);
     const textcolor = isLightColor(color) ? darkColor : lightColor;
     const name = req.query.name ? req.query.name as string : 'placeholder';
     const filepath = path.join(__dirname, `../../../images/placeholders/${name}.png`);
-    
-    await sharp({
-        create: {
-            width: width,
-            height: height,
-            channels: 4,
-            background: color
-        }
-    }).composite([
-        { input: {
-            text: {
-                text: `<span foreground="${textcolor}">${text}</span>`, //using pango markup to set text color
-                width: width-40, // max width
-                height: height-20, // max height
-                font: 'futura', 
-                justify: true,
-                align: 'center',
-                rgba: true,
+    try {
+        await sharp({
+            create: {
+                width: width,
+                height: height,
+                channels: 4,
+                background: color
             }
-        },
-        blend: 'over'
+        }).composite([
+            { input: {
+                text: {
+                    text: `<span foreground="${textcolor}">${text}</span>`, //using pango markup to set text color
+                    width: width-40, // max width
+                    height: height-20, // max height
+                    font: 'futura', 
+                    justify: true,
+                    align: 'center',
+                    rgba: true,
+                }
+            },
+            blend: 'over'
+        }
+        ]).toFile(filepath);
+        res.status(200).sendFile(filepath);
     }
-    ]).toFile(filepath);
-    res.status(200).sendFile(filepath);
+    catch (error) {
+        console.error(error)
+        res.status(500).send(`Oops, something went wrong: ${error}`)
+    }
+    
 })
 
 export default placeholder;

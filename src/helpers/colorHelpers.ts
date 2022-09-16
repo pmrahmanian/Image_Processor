@@ -2,7 +2,7 @@ export interface Color {
     r: number,
     g: number,
     b: number,
-    alpha?: number | undefined
+    alpha: number
 }
 
 export function getRGBValue (input:string):number {
@@ -21,12 +21,12 @@ export function getAlphaValue (input:string):number {
     return value
 }
 
-export function getRandomRGB():Color {
+export function getRandomRGB(alpha:number):Color {
     return {
         r: Math.floor(Math.random() * 255),
         g: Math.floor(Math.random() * 255),
         b: Math.floor(Math.random() * 255),
-        alpha: 1
+        alpha: alpha
     }
 }
 
