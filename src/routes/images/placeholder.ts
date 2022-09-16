@@ -16,7 +16,7 @@ placeholder.get('/', async (req:Request, res:Response)=> {
     const color = (r || g || b) ? {r:r, g:g, b:b, alpha:alpha} : getRandomRGB(alpha);
     const textcolor = isLightColor(color) ? darkColor : lightColor;
     const name = req.query.name ? req.query.name as string : 'placeholder';
-    const filepath = path.join(__dirname, `../../../images/placeholders/${name}.png`);
+    const filepath = path.join(__dirname, `../../../assets/placeholders/${name}.png`);
     try {
         await sharp({
             create: {
