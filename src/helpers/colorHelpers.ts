@@ -5,7 +5,7 @@ export interface Color {
     a?: number | undefined
 }
 
-export function getRGBvalue (input:string):number {
+export function getRGBValue (input:string):number {
     let value = parseInt(input)
     if (!value) return 0;
     if (value > 255) value = 255;
@@ -21,7 +21,7 @@ export function getRandomRGB():Color {
     }
 }
 
-export function islightColor (color:Color) {
+export function isLightColor (color:Color) {
     const {r, g, b} = color;
     const hsp = Math.sqrt(
         0.299*(r*r) +
