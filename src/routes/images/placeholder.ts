@@ -1,7 +1,7 @@
 import express, { Request, Response} from 'express';
 import path from 'path';
 import sharp from 'sharp';
-import {Color, getRGBValue, getRandomRGB, isLightColor, lightColor, darkColor} from '../../helpers/colorHelpers'
+import {Color, getRGBValue, getAlphaValue, getRandomRGB, isLightColor, lightColor, darkColor} from '../../helpers/colorHelpers'
 
 const placeholder = express.Router();
 
@@ -12,7 +12,8 @@ placeholder.get('/', async (req:Request, res:Response)=> {
     const r = req.query.r ? getRGBValue(req.query.r as string) as number: 0 as number;
     const g = req.query.g ? getRGBValue(req.query.g as string) as number: 0 as number;
     const b = req.query.b ? getRGBValue(req.query.b as string) as number: 0 as number;
-    const color = (r || g || b) ? {r:r, g:g, b:b} : getRandomRGB();
+    const alpha = req.query.alpha ? getAlphaValue(req.query.alpha as string) as number: 1 as number;
+    const color = (r || g || b) ? {r:r, g:g, b:b, alpha:alpha} : getRandomRGB();
     const textcolor = isLightColor(color) ? darkColor : lightColor;
     const name = req.query.name ? req.query.name as string : 'placeholder';
     const filepath = path.join(__dirname, `../../../images/placeholders/${name}.png`);
@@ -21,7 +22,7 @@ placeholder.get('/', async (req:Request, res:Response)=> {
         create: {
             width: width,
             height: height,
-            channels: 3,
+            channels: 4,
             background: color
         }
     }).composite([
