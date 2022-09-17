@@ -28,7 +28,7 @@ resize.get('/', async(req:Request, res:Response): Promise<void>=> {
     if (!req.query.name) {
         res.status(400).send(
             `Make sure to include the image file name as a query parameter.
-            To see a list of available images hit the GET /images/peek endpoint.`
+            To see a list of available images hit the GET /images endpoint.`
         );
         return
     }
