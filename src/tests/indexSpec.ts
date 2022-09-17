@@ -21,6 +21,6 @@ describe ('I: Test endpoint responses', () => {
 
     it ('I.4: gets the /images/resize endpoint', async() => {
         const response = await request.get('/images/resize');
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(400);
     })
 });
