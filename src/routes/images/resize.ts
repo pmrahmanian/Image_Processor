@@ -1,6 +1,25 @@
 import express, { Request, Response} from 'express';
 import path from 'path';
 import sharp from 'sharp';
+import imageNameExtractor from '../../helpers/imageNameExtractor'
+import imageExtensionExtractor from '../../helpers/imageExtensionExtractor'
+import fs from 'fs'
+
+function getExtension (format:string) {
+    switch (format) {
+        case 'jpeg':
+            return '.jpg';
+        case 'png':
+            return '.png';
+        case 'gif':
+            return '.gif';
+        default:
+            return '.jpg'
+    }
+    
+}
+
+type Format = string  & ('jpg' | 'jpeg' | 'png' |'gif')
 
 const resize = express.Router();
 
@@ -13,28 +32,43 @@ resize.get('/', async(req:Request, res:Response): Promise<void>=> {
         );
         return
     }
-    const name = req.query.name as string
+
+    const name: string = imageNameExtractor(req.query.name as string)
+    const extension: string = imageExtensionExtractor(req.query.name as string)
 
     // establish resizing dimensions from user inputs or default values.
     const width:number = req.query.width ? (parseInt(req.query.width as string)) : 300 ;
     const height:number = req.query.height ? (parseInt(req.query.height as string)): 300 ;
+
+    // get output format
+    const format:Format =  req.query.format ? req.query.format as Format : 'jpeg';
     
     // standardize output format for caching
-    const thumbName:string = `${name.slice(0, name.lastIndexOf('.'))}_${width}x${height}.jpg`
+    const thumbName:string = `${name}_${width}x${height}${getExtension(format)}`
 
     // normalize paths for input and output
-    const originalPath:string = path.join(__dirname, `../../../assets/originals/${name}`); 
+    const originalPath:string = path.join(__dirname, `../../../assets/originals/${name}${extension}`); 
     const thumbpath:string = path.join(__dirname, `../../../assets/thumbs/${thumbName}`);
 
     // Ensure image exists
+    let originalImageExists: boolean | null = null;
+    fs.stat(originalPath, (error, stats)=> {
+        if (error) console.error(error);
+        else {
+            originalImageExists = stats.isFile();
+        }
+    })
 
-    // res.status(404).send(`${name} does not exist on the server`)
+    if (!originalImageExists) {
+        res.status(404).send(`${name+extension} does not exist on the server`)
+        return
+    }
 
     // Check for Cahced image
 
     // Resize
     try {
-        await sharp(originalPath).resize({width:width, height:height}).toFile(thumbpath)
+        await sharp(originalPath).toFormat(format).resize({width:width, height:height}).toFile(thumbpath)
         res.status(200).sendFile(thumbpath)
     } catch (error) {
         console.log(error)
