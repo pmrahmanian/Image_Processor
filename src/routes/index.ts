@@ -5,13 +5,9 @@ import peek from './images/peek'
 
 const routes = express.Router();
 
-routes.get('/', (req:Request, res:Response)=> {
-    res.send('connected to the router');
-})
-
 routes.use('/placeholder', placeholder);
 routes.use('/resize', resize)
-routes.use('/peek', peek)
+routes.use('/', peek)
 
 
 export default routes;
