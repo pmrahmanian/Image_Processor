@@ -32,6 +32,9 @@ export function getRandomRGB(alpha:number):Color {
 
 export function isLightColor (color:Color) {
     const {r, g, b} = color;
+
+    // referenced from https://awik.io/determine-color-bright-dark-using-javascript/
+    // HSP (Highly Sensitive Poo) equation from http://alienryderflex.com/hsp.html
     const hsp = Math.sqrt(
         0.299*(r*r) +
         0.587*(g*g) +
