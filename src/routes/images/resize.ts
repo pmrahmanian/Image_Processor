@@ -51,24 +51,26 @@ resize.get('/', async(req:Request, res:Response): Promise<void>=> {
     const thumbpath:string = path.join(__dirname, `../../../assets/thumbs/${thumbName}`);
 
     // Ensure image exists
-    let originalImageExists: boolean | null = null;
-    fs.stat(originalPath, (error, stats)=> {
-        if (error) console.error(error);
-        else {
-            originalImageExists = stats.isFile();
-        }
-    })
+    let originalImageExists: boolean = fs.existsSync(originalPath);
 
     if (!originalImageExists) {
-        res.status(404).send(`${name+extension} does not exist on the server`)
+        res.status(404).send(`<b>${name+extension}</b> does not exist on the server:<br>
+        PATH ${originalPath}`)
         return
     }
 
     // Check for Cahced image
+    let thumbnailImageExists: boolean = fs.existsSync(thumbpath);
+    if (thumbnailImageExists) {
+        console.log(`loading ${thumbName} from cache`)
+        res.status(200).sendFile(thumbpath)
+        return
+    }
 
     // Resize
     try {
         await sharp(originalPath).toFormat(format).resize({width:width, height:height}).toFile(thumbpath)
+        console.log(`resized ${name+extension} to ${thumbName}`)
         res.status(200).sendFile(thumbpath)
     } catch (error) {
         console.log(error)
