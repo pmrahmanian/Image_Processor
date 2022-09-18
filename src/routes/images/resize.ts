@@ -1,16 +1,17 @@
 import express, { Request, Response} from 'express';
 import path from 'path';
-import sharp from 'sharp';
 import imageNameExtractor from '../../helpers/imageNameExtractor'
 import imageExtensionExtractor from '../../helpers/imageExtensionExtractor'
 import fs from 'fs'
 import getExtensionFromFormat from '../../helpers/getExtensionFromFormat'
+import imageFormatAndResize, {imageTransformReq} from '../../helpers/imageFormatAndResize'
 
 type Format = string  & ('jpg' | 'jpeg' | 'png' |'gif')
 
 const resize = express.Router();
 
 resize.get('/', async(req:Request, res:Response): Promise<void>=> {
+    /* ----- FATAL ERROR HANDLING ----- */
     // name is a required query parameter, if not present we exit the method
     if (!req.query.name) {
         res.status(400).send(
@@ -19,6 +20,8 @@ resize.get('/', async(req:Request, res:Response): Promise<void>=> {
         );
         return
     }
+
+    /* ----- ESTABLISHING VARIABLES ----- */
 
     const name: string = imageNameExtractor(req.query.name as string)
     const extension: string = imageExtensionExtractor(req.query.name as string)
@@ -37,6 +40,9 @@ resize.get('/', async(req:Request, res:Response): Promise<void>=> {
     const originalPath:string = path.join(__dirname, `../../../assets/originals/${name}${extension}`); 
     const thumbpath:string = path.join(__dirname, `../../../assets/thumbs/${thumbName}`);
 
+
+    /* ----- ENDPOINT LOGIC AND ERROR HANDLING ----- */
+
     // Ensure image exists
     let originalImageExists: boolean = fs.existsSync(originalPath);
 
@@ -46,7 +52,7 @@ resize.get('/', async(req:Request, res:Response): Promise<void>=> {
         return
     }
 
-    // Check for Cahced image
+    // Check for cahced image and return that is found
     let thumbnailImageExists: boolean = fs.existsSync(thumbpath);
     if (thumbnailImageExists) {
         console.log(`loading ${thumbName} from cache`)
@@ -56,16 +62,20 @@ resize.get('/', async(req:Request, res:Response): Promise<void>=> {
 
     // Resize
     try {
-        await sharp(originalPath).toFormat(format).resize({width:width, height:height}).toFile(thumbpath)
+        const imageTransformationRequest: imageTransformReq = {
+            originalPath,
+            format,
+            width,
+            height,
+            thumbpath
+        }
+        await imageFormatAndResize(imageTransformationRequest)
         console.log(`resized ${name+extension} to ${thumbName}`)
         res.status(200).sendFile(thumbpath)
     } catch (error) {
         console.log(error)
         res.status(500).send('something went wrong resizing this image')
     }
-
-
-
 
 })
 
