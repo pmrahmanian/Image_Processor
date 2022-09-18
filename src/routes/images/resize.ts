@@ -63,7 +63,7 @@ resize.get('/', async(req:Request, res:Response): Promise<void>=> {
     let thumbnailImageExists: boolean = fs.existsSync(thumbpath);
     if (thumbnailImageExists) {
         console.log(`loading ${thumbName} from cache`)
-        res.status(200).sendFile(thumbpath)
+        res.status(220).sendFile(thumbpath)
         return
     }
 
