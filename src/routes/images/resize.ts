@@ -4,20 +4,7 @@ import sharp from 'sharp';
 import imageNameExtractor from '../../helpers/imageNameExtractor'
 import imageExtensionExtractor from '../../helpers/imageExtensionExtractor'
 import fs from 'fs'
-
-function getExtension (format:string) {
-    switch (format) {
-        case 'jpeg':
-            return '.jpg';
-        case 'png':
-            return '.png';
-        case 'gif':
-            return '.gif';
-        default:
-            return '.jpg'
-    }
-    
-}
+import getExtensionFromFormat from '../../helpers/getExtensionFromFormat'
 
 type Format = string  & ('jpg' | 'jpeg' | 'png' |'gif')
 
@@ -44,7 +31,7 @@ resize.get('/', async(req:Request, res:Response): Promise<void>=> {
     const format:Format =  req.query.format ? req.query.format as Format : 'jpeg';
     
     // standardize output format for caching
-    const thumbName:string = `${name}_${width}x${height}${getExtension(format)}`
+    const thumbName:string = `${name}_${width}x${height}${getExtensionFromFormat(format)}`
 
     // normalize paths for input and output
     const originalPath:string = path.join(__dirname, `../../../assets/originals/${name}${extension}`); 
