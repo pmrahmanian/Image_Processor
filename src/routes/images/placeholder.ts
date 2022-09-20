@@ -2,7 +2,7 @@ import express, { Request, Response} from 'express';
 import path from 'path';
 import sharp from 'sharp';
 import {Color, getRGBValue, getAlphaValue, getRandomRGB, isLightColor, lightColor, darkColor} from '../../helpers/colorHelpers'
-
+// import * as Global from '../../global.d'
 const placeholder = express.Router();
 
 placeholder.get('/', async (req:Request, res:Response)=> {

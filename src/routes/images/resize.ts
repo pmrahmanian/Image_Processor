@@ -6,6 +6,8 @@ import fs from 'fs'
 import getExtensionFromFormat from '../../helpers/getExtensionFromFormat'
 import imageFormatAndResize, {imageTransformReq} from '../../helpers/imageFormatAndResize'
 
+// @REVIEWER : The only way I can get the server to start without an error is to include this type here. It cannot find the declaration from my src/@types/index.d.ts file
+// How am I supposed to do this?
 type Format = string  & ('jpg' | 'jpeg' | 'png' |'gif')
 
 const resize = express.Router();

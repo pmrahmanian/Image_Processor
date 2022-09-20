@@ -1,0 +1,1 @@
+type Format = string  & ('jpg' | 'jpeg' | 'png' |'gif')
